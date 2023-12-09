@@ -54,8 +54,8 @@ pub async fn run_tcp(endpoint: Endpoint) -> Result<()> {
         let sockref = socket2::SockRef::from(&local);
         let mut ka = socket2::TcpKeepalive::new();
         ka = ka
-            .with_time(Duration::from_secs(*tcp_keepalive))
-            .with_interval(Duration::from_secs(*tcp_keepalive));
+            .with_time(Duration::from_secs(conn_opts.tcp_keepalive))
+            .with_interval(Duration::from_secs(conn_opts.tcp_keepalive));
 
         sockref.set_tcp_keepalive(&ka);
         tokio::spawn(async move {
