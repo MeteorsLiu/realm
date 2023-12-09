@@ -14,6 +14,7 @@ mod proxy;
 mod transport;
 
 use std::io::{ErrorKind, Result};
+use std::time::Duration;
 
 use crate::trick::Ref;
 use crate::endpoint::Endpoint;
@@ -50,7 +51,13 @@ pub async fn run_tcp(endpoint: Endpoint) -> Result<()> {
 
         // ignore error
         let _ = local.set_nodelay(true);
+        let sockref = socket2::SockRef::from(&local);
+        let mut ka = socket2::TcpKeepalive::new();
+        ka = ka
+            .with_time(Duration::from_secs(*tcp_keepalive))
+            .with_interval(Duration::from_secs(*tcp_keepalive));
 
+        sockref.set_tcp_keepalive(&ka);
         tokio::spawn(async move {
             match connect_and_relay(local, raddr, conn_opts, extra_raddrs).await {
                 Ok(..) => log::debug!("[tcp]{} => {}, finish", addr, raddr.as_ref()),
