@@ -128,8 +128,8 @@ impl Display for ConnectOpts {
 
         write!(
             f,
-            "connect-timeout={}s, associate-timeout={}s; ",
-            connect_timeout, associate_timeout
+            "tcp-keepalive={}s connect-timeout={}s, associate-timeout={}s; ",
+            tcp_keepalive, connect_timeout, associate_timeout
         )?;
 
         #[cfg(feature = "transport")]
