@@ -57,7 +57,7 @@ pub async fn run_tcp(endpoint: Endpoint) -> Result<()> {
             .with_time(Duration::from_secs(conn_opts.tcp_keepalive))
             .with_interval(Duration::from_secs(conn_opts.tcp_keepalive));
 
-        sockref.set_tcp_keepalive(&ka);
+        let _ = sockref.set_tcp_keepalive(&ka);
         tokio::spawn(async move {
             match connect_and_relay(local, raddr, conn_opts, extra_raddrs).await {
                 Ok(..) => log::debug!("[tcp]{} => {}, finish", addr, raddr.as_ref()),
