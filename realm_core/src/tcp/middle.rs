@@ -77,7 +77,7 @@ pub async fn connect_and_relay(
 
     // connect!
     let mut remote = socket::connect(raddr, conn_opts.as_ref()).await?;
-    let sockref = socket2::SockRef::from(remote);
+    let sockref = socket2::SockRef::from(&remote);
     let mut ka = socket2::TcpKeepalive::new();
 
     ka = ka
