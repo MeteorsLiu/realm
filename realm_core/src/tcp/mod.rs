@@ -51,13 +51,15 @@ pub async fn run_tcp(endpoint: Endpoint) -> Result<()> {
 
         // ignore error
         let _ = local.set_nodelay(true);
-        let sockref = socket2::SockRef::from(&local);
-        let mut ka = socket2::TcpKeepalive::new();
-        ka = ka
-            .with_time(Duration::from_secs(conn_opts.tcp_keepalive))
-            .with_interval(Duration::from_secs(conn_opts.tcp_keepalive));
+        if conn_opts.tcp_keepalive > 0 {
+            let sockref = socket2::SockRef::from(&local);
+            let mut ka = socket2::TcpKeepalive::new();
+            ka = ka
+                .with_time(Duration::from_secs(conn_opts.tcp_keepalive))
+                .with_interval(Duration::from_secs(conn_opts.tcp_keepalive));
 
-        let _ = sockref.set_tcp_keepalive(&ka);
+            let _ = sockref.set_tcp_keepalive(&ka);
+        }
         tokio::spawn(async move {
             match connect_and_relay(local, raddr, conn_opts, extra_raddrs).await {
                 Ok(..) => log::debug!("[tcp]{} => {}, finish", addr, raddr.as_ref()),
