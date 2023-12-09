@@ -84,7 +84,7 @@ pub async fn connect_and_relay(
         .with_time(Duration::from_secs(*tcp_keepalive))
         .with_interval(Duration::from_secs(*tcp_keepalive));
 
-    sockref.set_tcp_keepalive(&ka);
+    let _ = sockref.set_tcp_keepalive(&ka);
     log::info!("[tcp]{} => {} as {}", local.peer_addr()?, raddr, remote.peer_addr()?);
 
     // after connected
